@@ -3,7 +3,9 @@
 
 
 ## UNDER CONSTRUCTION... 
-### Everything that is complete works but the gui looks terrible and all the functionality isn't present.
+**Everything that is complete works but the gui looks terrible and all the functionality isn't present.
+Almost done with a working Beta**
+
 
 ---
 

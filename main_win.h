@@ -36,6 +36,9 @@ private:
 	System::Windows::Forms::Button^ run_script_btn;
 	System::Windows::Forms::Button^ add_arg_btn;
 
+	static bool REDIRECT_PROC_OUTPUT = true; // By default display script output within BatchEdit
+	System::Windows::Forms::CheckBox^ redirect_proc_output_checkbox;
+
 	System::Windows::Forms::ListView^ args_list_view;
 
 	static System::String^ APP_AUTHOR = "Paul McCarthy";
@@ -70,8 +73,8 @@ private:
 	static bool FILE_IS_MODIFIED = false; // Flag to signal that the current file has been modified.
 
 	void outputDataReceived(Object^ sender, System::Diagnostics::DataReceivedEventArgs^ e);
-	void MainWin::runScript(System::String^ script_path);
-	void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args);
+	void MainWin::runScript(System::String^ script_path, bool redirect);
+	void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args, bool redirect);
 
 	void newFile();
 	void showOpenFileDialog();
@@ -105,4 +108,5 @@ private:
 	void onOpenFileDialogFileOk(System::Object^ sender, System::ComponentModel::CancelEventArgs^ ea);
 	void onSaveAsFileDialogFileOk(System::Object^ sender, System::ComponentModel::CancelEventArgs^ ea);
 	void onAddArgBtnClick(System::Object^ sender, System::EventArgs^ ea);
+	void onRedirectProcCheckedChanged(System::Object^ sender, System::EventArgs^ ea);
 };

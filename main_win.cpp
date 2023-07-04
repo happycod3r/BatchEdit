@@ -12,8 +12,7 @@ using namespace System::Windows::Forms;
 using namespace System::Drawing;
 using namespace System::Diagnostics;
 
-#include "process_controler.h";
-#include "main_win.h";
+#include "main_win.h"
 
 MainWin::MainWin()
 {
@@ -62,32 +61,46 @@ void MainWin::outputDataReceived(Object^ sender, DataReceivedEventArgs^ e)
 	}
 }
 
-void MainWin::runScript(System::String^ script_path) {
+void MainWin::runScript(System::String^ script_path, bool redirect) {
 	if (!System::String::IsNullOrEmpty(script_path))
 	{
 		Process^ process = gcnew Process();
 		process->StartInfo = gcnew ProcessStartInfo(script_path);
-		process->StartInfo->UseShellExecute = false;
-		process->StartInfo->RedirectStandardOutput = true;
-		process->StartInfo->CreateNoWindow = true;
-		process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
-		process->Start();
-		process->BeginOutputReadLine();
+		if (redirect) {
+			process->StartInfo->RedirectStandardOutput = true;
+			process->StartInfo->UseShellExecute = false;
+			process->StartInfo->CreateNoWindow = true;
+			process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
+			process->Start();
+			process->BeginOutputReadLine();
+		}
+		else {
+			process->StartInfo->RedirectStandardOutput = false;
+			process->StartInfo->UseShellExecute = true;
+			process->StartInfo->CreateNoWindow = false;
+			process->Start();
+		}
 	}
 }
 
-void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args) {
+void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args, bool redirect) {
 	if (!System::String::IsNullOrEmpty(script_path))
 	{
 		Process^ process = gcnew Process();
 		process->StartInfo = gcnew ProcessStartInfo(script_path);
 		process->StartInfo->UseShellExecute = false;
-		process->StartInfo->RedirectStandardOutput = true;
 		process->StartInfo->CreateNoWindow = true;
 		process->StartInfo->Arguments = script_args;
 		process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
-		process->Start();
-		process->BeginOutputReadLine();
+		if (redirect) {
+			process->StartInfo->RedirectStandardOutput = true;
+			process->Start();
+			process->BeginOutputReadLine();
+		}
+		else {
+			process->StartInfo->RedirectStandardOutput = false;
+			process->Start();
+		}
 	}
 }
 
@@ -182,7 +195,7 @@ void MainWin::init()
 
 	output = (gcnew RichTextBox());
 	output->Location = Point(1, 350);
-	output->Size = ::Size(464, 59);
+	output->Size = ::Size(404, 59);
 	output->AcceptsTab = false;
 	output->DetectUrls = true;
 	output->Enabled = true;
@@ -253,10 +266,19 @@ void MainWin::init()
 	args_list_view->Size = ::Size(125, 87);
 	args_list_view->BackColor = SystemColors::ControlDark;
 	args_list_view->ForeColor = Color::Black;
+	args_list_view->Alignment = ListViewAlignment::Top;
+	args_list_view->View = System::Windows::Forms::View::Details;
+	args_list_view->Columns->Add("Arguments", 100);
 	args_list_view->ControlAdded += gcnew ControlEventHandler(this, &MainWin::onArgsListControlAdded);
 	args_list_view->ControlRemoved += gcnew ControlEventHandler(this, &MainWin::onArgsListControlRemoved);
 
-	array<Control^>^ ctrls = (gcnew array<Control^>(10)
+	redirect_proc_output_checkbox = (gcnew CheckBox());
+	redirect_proc_output_checkbox->Size = Drawing::Size(40, 40);
+	redirect_proc_output_checkbox->Location = Drawing::Point(420, 350);
+	redirect_proc_output_checkbox->CheckState = CheckState::Checked;
+	redirect_proc_output_checkbox->CheckedChanged += gcnew System::EventHandler(this, &MainWin::onRedirectProcCheckedChanged);
+
+	array<Control^>^ ctrls = (gcnew array<Control^>(11)
 	{
 		main_menu,
 			file_name_output,
@@ -267,7 +289,8 @@ void MainWin::init()
 			args_input,
 			clear_output_btn,
 			add_arg_btn,
-			args_list_view
+			args_list_view,
+			redirect_proc_output_checkbox
 	});
 
 	Controls->AddRange(ctrls);
@@ -582,11 +605,23 @@ void MainWin::onRunScriptBtnClick(Object^ sender, EventArgs^ ea)
 		ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
 	}
 	saveFile();
+	// If there is no arguments...
 	if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
-		this->runScript(CURRENT_FILE_PATH);
+		if (REDIRECT_PROC_OUTPUT == true) {
+			this->runScript(CURRENT_FILE_PATH, true);
+		}
+		else {
+			this->runScript(CURRENT_FILE_PATH, false);
+		}
 	}
+	// If there are arguments...
 	else {
-		this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS);
+		if (REDIRECT_PROC_OUTPUT == true) {
+			this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, true);
+		}
+		else {
+			this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, false);
+		}
 	}
 
 }
@@ -618,3 +653,12 @@ void MainWin::onArgsListControlRemoved(Object^ sender, ControlEventArgs^ ea)
 
 }
 
+void MainWin::onRedirectProcCheckedChanged(System::Object^ sender, System::EventArgs^ ea) {
+	bool checked_state = this->redirect_proc_output_checkbox->Checked;
+	if (checked_state) {
+		REDIRECT_PROC_OUTPUT = true;
+	}
+	else {
+		REDIRECT_PROC_OUTPUT = false;
+	}
+}
