@@ -33,5 +33,6 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="LICENSE.md" />
   </ItemGroup>
 </Project>

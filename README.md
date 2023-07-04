@@ -1,6 +1,9 @@
-# BatchEdit v1.0.0
-
+# BatchEdit v1.0.0 Beta
 > A lightweight batch scripting development environment written in C++ CLI .Net Framework
+
+
+## UNDER CONSTRUCTION... 
+### Everything that is complete works but the gui looks terrible and all the functionality isn't present.
 
 ---
 

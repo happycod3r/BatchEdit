@@ -12,7 +12,8 @@ using namespace System::Windows::Forms;
 using namespace System::Drawing;
 using namespace System::Diagnostics;
 
-#include "main_win.h"
+#include "main_win.h";
+#include "process_controler.h";
 
 MainWin::MainWin()
 {
@@ -102,7 +103,7 @@ void MainWin::init()
 	Shown += gcnew System::EventHandler(this, &MainWin::onMainWinShown);
 
 	main_menu = (gcnew MenuStrip());
-	main_menu->BackColor = SystemColors::Control;
+	main_menu->BackColor = SystemColors::ControlDark;
 	main_menu->ForeColor = Color::Black;
 
 	file_menu = (gcnew ToolStripMenuItem("File"));
@@ -214,8 +215,8 @@ void MainWin::init()
 	run_script_btn->Click += gcnew EventHandler(this, &MainWin::onRunScriptBtnClick);
 
 	args_input = (gcnew RichTextBox());
-	args_input->Location = Point(220, 409);
-	args_input->Size = ::Size(150, 25);
+	args_input->Location = Point(180, 409);
+	args_input->Size = ::Size(222, 25);
 	args_input->AcceptsTab = false;
 	args_input->DetectUrls = true;
 	args_input->Enabled = true;
@@ -224,7 +225,7 @@ void MainWin::init()
 	args_input->Multiline = false;
 	args_input->Text = ARGS_INPUT_DEFAULT_TXT;
 	args_input->BorderStyle = ::BorderStyle::None;
-	args_input->BackColor = Color::SkyBlue;
+	args_input->BackColor = SystemColors::ControlDark;
 	args_input->ForeColor = Color::Black;
 	args_input->RichTextShortcutsEnabled = true;
 	args_input->TextChanged += gcnew EventHandler(this, &MainWin::onArgsInputTextChanged);
@@ -234,7 +235,7 @@ void MainWin::init()
 	clear_output_btn->Size = ::Size(60, 26);
 	clear_output_btn->Text = "Clear";
 	clear_output_btn->FlatStyle = ::FlatStyle::Popup;
-	clear_output_btn->BackColor = SystemColors::ControlLight;
+	clear_output_btn->BackColor = SystemColors::Control;
 	clear_output_btn->ForeColor = Color::Black;
 	clear_output_btn->Click += gcnew EventHandler(this, &MainWin::onClearOutputBtnClick);
 
@@ -243,14 +244,14 @@ void MainWin::init()
 	add_arg_btn->Size = ::Size(60, 26);
 	add_arg_btn->Text = "Add arg";
 	add_arg_btn->FlatStyle = ::FlatStyle::Popup;
-	add_arg_btn->BackColor = SystemColors::ControlLight;
+	add_arg_btn->BackColor = SystemColors::Control;
 	add_arg_btn->ForeColor = Color::Black;
 	add_arg_btn->Click += gcnew EventHandler(this, &MainWin::onAddArgBtnClick);
 
 	args_list_view = (gcnew ListView());
 	args_list_view->Location = Point(464, 350);
 	args_list_view->Size = ::Size(125, 87);
-	args_list_view->BackColor = Color::Red;
+	args_list_view->BackColor = SystemColors::ControlDark;
 	args_list_view->ForeColor = Color::Black;
 	args_list_view->ControlAdded += gcnew ControlEventHandler(this, &MainWin::onArgsListControlAdded);
 	args_list_view->ControlRemoved += gcnew ControlEventHandler(this, &MainWin::onArgsListControlRemoved);
