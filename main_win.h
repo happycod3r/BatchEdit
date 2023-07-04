@@ -12,7 +12,7 @@ protected:
 	~MainWin();
 
 private:
-
+	System::ComponentModel::Container^ components;
 	System::Windows::Forms::MenuStrip^ main_menu;
 	System::Windows::Forms::ToolStripMenuItem^ file_menu;
 	System::Windows::Forms::ToolStripMenuItem^ file_menu_open;
@@ -85,7 +85,7 @@ private:
 	void saveFileAs();
 	void exitApp();
 	void restartApp();
-	void init();
+	void InitializeComponent();
 
 	void onMainWinShown(System::Object^ sender, System::EventArgs^ e);
 	void onMainWinLoad(System::Object^ sender, System::EventArgs^ e);

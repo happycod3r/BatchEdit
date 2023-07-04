@@ -16,11 +16,14 @@ using namespace System::Diagnostics;
 
 MainWin::MainWin()
 {
-	init();
+	InitializeComponent();
 }
 
 MainWin::~MainWin()
 {
+	if (components) {
+		delete components;
+	}
 	if (this)
 	{
 		file_name_output->TextChanged -= gcnew EventHandler(this, &MainWin::onFileNameOutputTextChanged);
@@ -104,9 +107,9 @@ void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ scr
 	}
 }
 
-void MainWin::init()
+void MainWin::InitializeComponent()
 {
-	SuspendLayout();
+	this->SuspendLayout();
 	Size = ::Size(600, 475);
 	MaximizeBox = false;
 	MinimizeBox = true;
@@ -295,8 +298,8 @@ void MainWin::init()
 
 	Controls->AddRange(ctrls);
 
-	ResumeLayout(false);
-	PerformLayout();
+	this->ResumeLayout(false);
+	this->PerformLayout();
 }
 
 void MainWin::onMainWinShown(Object^ sender, EventArgs^ ea)
