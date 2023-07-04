@@ -12,8 +12,8 @@ using namespace System::Windows::Forms;
 using namespace System::Drawing;
 using namespace System::Diagnostics;
 
-#include "main_win.h";
 #include "process_controler.h";
+#include "main_win.h";
 
 MainWin::MainWin()
 {

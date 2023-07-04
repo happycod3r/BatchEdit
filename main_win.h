@@ -7,6 +7,8 @@ public:
 
 	MainWin();
 
+protected:
+
 	~MainWin();
 
 private:
