@@ -129,12 +129,10 @@
   <ItemGroup>
     <ClCompile Include="main_win.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="script_runner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
     <ClInclude Include="main_win.h" />
-    <ClInclude Include="script_runner.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

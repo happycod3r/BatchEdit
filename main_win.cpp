@@ -10,9 +10,9 @@ using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Windows::Forms;
 using namespace System::Drawing;
+using namespace System::Diagnostics;
 
 #include "main_win.h"
-#include "script_runner.h"
 
 MainWin::MainWin()
 {
@@ -50,6 +50,43 @@ MainWin::~MainWin()
 			save_as_file_dialog->FileOk -= gcnew CancelEventHandler(this, &MainWin::onSaveAsFileDialogFileOk);
 		}
 
+	}
+}
+
+void MainWin::outputDataReceived(Object^ sender, DataReceivedEventArgs^ e)
+{
+	if (!String::IsNullOrEmpty(e->Data))
+	{
+		this->output->AppendText(OUTPUT_PROMPT + e->Data + Environment::NewLine);
+	}
+}
+
+void MainWin::runScript(System::String^ script_path) {
+	if (!System::String::IsNullOrEmpty(script_path))
+	{
+		Process^ process = gcnew Process();
+		process->StartInfo = gcnew ProcessStartInfo(script_path);
+		process->StartInfo->UseShellExecute = false;
+		process->StartInfo->RedirectStandardOutput = true;
+		process->StartInfo->CreateNoWindow = true;
+		process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
+		process->Start();
+		process->BeginOutputReadLine();
+	}
+}
+
+void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args) {
+	if (!System::String::IsNullOrEmpty(script_path))
+	{
+		Process^ process = gcnew Process();
+		process->StartInfo = gcnew ProcessStartInfo(script_path);
+		process->StartInfo->UseShellExecute = false;
+		process->StartInfo->RedirectStandardOutput = true;
+		process->StartInfo->CreateNoWindow = true;
+		process->StartInfo->Arguments = script_args;
+		process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
+		process->Start();
+		process->BeginOutputReadLine();
 	}
 }
 
@@ -144,7 +181,7 @@ void MainWin::init()
 
 	output = (gcnew RichTextBox());
 	output->Location = Point(1, 350);
-	output->Size = ::Size(433, 59);
+	output->Size = ::Size(464, 59);
 	output->AcceptsTab = false;
 	output->DetectUrls = true;
 	output->Enabled = true;
@@ -154,13 +191,13 @@ void MainWin::init()
 	output->Text = OUTPUT_PROMPT;
 	output->ReadOnly = true;
 	output->BorderStyle = ::BorderStyle::Fixed3D;
-	output->BackColor = SystemColors::ControlLight;
+	output->BackColor = SystemColors::ControlDark;
 	output->ForeColor = Color::Black;
 	output->TextChanged += gcnew EventHandler(this, &MainWin::onOutputTextChanged);
 
 	save_script_btn = (gcnew Button());
 	save_script_btn->Location = Point(2, 409);
-	save_script_btn->Size = ::Size(107, 26);
+	save_script_btn->Size = ::Size(60, 26);
 	save_script_btn->Text = "Save Script";
 	save_script_btn->FlatStyle = ::FlatStyle::Popup;
 	save_script_btn->BackColor = SystemColors::ControlLight;
@@ -168,8 +205,8 @@ void MainWin::init()
 	save_script_btn->Click += gcnew EventHandler(this, &MainWin::onSaveScriptBtnClick);
 
 	run_script_btn = (gcnew Button());
-	run_script_btn->Location = Point(111, 409);
-	run_script_btn->Size = ::Size(107, 26);
+	run_script_btn->Location = Point(60, 409);
+	run_script_btn->Size = ::Size(60, 26);
 	run_script_btn->Text = "Run Script";
 	run_script_btn->FlatStyle = ::FlatStyle::Popup;
 	run_script_btn->BackColor = SystemColors::ControlLight;
@@ -182,18 +219,27 @@ void MainWin::init()
 	args_input->AcceptsTab = false;
 	args_input->DetectUrls = true;
 	args_input->Enabled = true;
-	args_input->Font = (gcnew ::Font("Trebuchet MS", 10.0, FontStyle::Italic));
+	args_input->Font = (gcnew ::Font("Trebuchet MS", 10.0, FontStyle::Regular));
 	args_input->MaxLength = 512;
 	args_input->Multiline = false;
 	args_input->Text = ARGS_INPUT_DEFAULT_TXT;
 	args_input->BorderStyle = ::BorderStyle::None;
-	args_input->BackColor = SystemColors::ControlLight;
+	args_input->BackColor = Color::SkyBlue;
 	args_input->ForeColor = Color::Black;
 	args_input->RichTextShortcutsEnabled = true;
 	args_input->TextChanged += gcnew EventHandler(this, &MainWin::onArgsInputTextChanged);
 
+	clear_output_btn = (gcnew Button());
+	clear_output_btn->Location = Point(120, 409);
+	clear_output_btn->Size = ::Size(60, 26);
+	clear_output_btn->Text = "Clear";
+	clear_output_btn->FlatStyle = ::FlatStyle::Popup;
+	clear_output_btn->BackColor = SystemColors::ControlLight;
+	clear_output_btn->ForeColor = Color::Black;
+	clear_output_btn->Click += gcnew EventHandler(this, &MainWin::onClearOutputBtnClick);
+
 	add_arg_btn = (gcnew Button());
-	add_arg_btn->Location = Point(372, 409);
+	add_arg_btn->Location = Point(404, 409);
 	add_arg_btn->Size = ::Size(60, 26);
 	add_arg_btn->Text = "Add arg";
 	add_arg_btn->FlatStyle = ::FlatStyle::Popup;
@@ -202,14 +248,14 @@ void MainWin::init()
 	add_arg_btn->Click += gcnew EventHandler(this, &MainWin::onAddArgBtnClick);
 
 	args_list_view = (gcnew ListView());
-	args_list_view->Location = Point(434, 350);
-	args_list_view->Size = ::Size(150, 87);
-	args_list_view->BackColor = SystemColors::ControlLight;
+	args_list_view->Location = Point(464, 350);
+	args_list_view->Size = ::Size(125, 87);
+	args_list_view->BackColor = Color::Red;
 	args_list_view->ForeColor = Color::Black;
 	args_list_view->ControlAdded += gcnew ControlEventHandler(this, &MainWin::onArgsListControlAdded);
 	args_list_view->ControlRemoved += gcnew ControlEventHandler(this, &MainWin::onArgsListControlRemoved);
 
-	array<Control^>^ ctrls = (gcnew array<Control^>(9)
+	array<Control^>^ ctrls = (gcnew array<Control^>(10)
 	{
 		main_menu,
 			file_name_output,
@@ -218,6 +264,7 @@ void MainWin::init()
 			save_script_btn,
 			run_script_btn,
 			args_input,
+			clear_output_btn,
 			add_arg_btn,
 			args_list_view
 	});
@@ -519,7 +566,7 @@ void MainWin::onOutputTextChanged(Object^ sender, EventArgs^ ea)
 
 void MainWin::onArgsInputTextChanged(Object^ sender, EventArgs^ ea)
 {
-
+	SCRIPT_ARGS = this->args_input->Text;
 }
 
 void MainWin::onSaveScriptBtnClick(Object^ sender, EventArgs^ ea)
@@ -529,13 +576,35 @@ void MainWin::onSaveScriptBtnClick(Object^ sender, EventArgs^ ea)
 
 void MainWin::onRunScriptBtnClick(Object^ sender, EventArgs^ ea)
 {
+	String^ ALL_SCRIPT_ARGS = "";
+	for (int i = 0; i < this->args_list_view->Items->Count; i++) {
+		ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
+	}
 	saveFile();
-	ScriptRunner^ new_script_runner = gcnew ScriptRunner(CURRENT_FILE_PATH);
+	if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
+		this->runScript(CURRENT_FILE_PATH);
+	}
+	else {
+		this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS);
+	}
+
+}
+
+void MainWin::onClearOutputBtnClick(Object^ sender, EventArgs^ ea)
+{
+	this->output->Clear();
 }
 
 void MainWin::onAddArgBtnClick(Object^ sender, EventArgs^ ea)
 {
+	ListViewItem^ arg_list_item = gcnew ListViewItem();
+	arg_list_item->Text = SCRIPT_ARGS + " ";
+	arg_list_item->BackColor = SystemColors::Control;
+	arg_list_item->Font = (gcnew ::Font("Consolas", 10.0, FontStyle::Regular));
 
+	this->args_input->Clear();
+
+	this->args_list_view->Items->Add(arg_list_item);
 }
 
 void MainWin::onArgsListControlAdded(Object^ sender, ControlEventArgs^ ea)

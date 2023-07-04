@@ -21,18 +21,12 @@
     <ClCompile Include="main_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="script_runner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main_win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="script_runner.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

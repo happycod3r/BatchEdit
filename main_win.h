@@ -30,20 +30,22 @@ private:
 	System::Windows::Forms::RichTextBox^ file_name_output;
 
 	System::Windows::Forms::Button^ save_script_btn;
-	System::Windows::Forms::Button^ add_arg_btn;
+	System::Windows::Forms::Button^ clear_output_btn;
 	System::Windows::Forms::Button^ run_script_btn;
+	System::Windows::Forms::Button^ add_arg_btn;
 
 	System::Windows::Forms::ListView^ args_list_view;
-	System::Windows::Forms::ListViewItem^ arg_list_item;
 
 	static System::String^ APP_AUTHOR = "Paul McCarthy";
 	static System::String^ APP_TITLE = "AutoBatch";
 	static System::String^ APP_VERSION = "2.0";
-	static System::String^ OUTPUT_PROMPT = ":>> ";
+	static System::String^ OUTPUT_PROMPT = ":> ";
 	static System::String^ ARGS_INPUT_DEFAULT_TXT = " Arguments...";
 	static System::String^ CURRENT_FILE_PATH = "\0";
 	static System::String^ DEFAULT_FILE_NAME = "file";
 	static System::String^ DEFAULT_FILE_EXTENSION = ".bat";
+
+	static System::String^ SCRIPT_ARGS = "";
 
 	System::String^ getFullyQualifiedDefaultFileName();
 
@@ -64,6 +66,10 @@ private:
 	static bool FILE_IS_SAVED = true; // Flag to signal if the current file is saved or not.
 	static bool FILE_HAS_BEEN_CREATED = false; // Flag to signal if the current file has been previously created or not.
 	static bool FILE_IS_MODIFIED = false; // Flag to signal that the current file has been modified.
+
+	void outputDataReceived(Object^ sender, System::Diagnostics::DataReceivedEventArgs^ e);
+	void MainWin::runScript(System::String^ script_path);
+	void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args);
 
 	void newFile();
 	void showOpenFileDialog();
@@ -91,9 +97,10 @@ private:
 	void onArgsInputTextChanged(System::Object^ sender, System::EventArgs^ ea);
 	void onSaveScriptBtnClick(System::Object^ sender, System::EventArgs^ ea);
 	void onRunScriptBtnClick(System::Object^ sender, System::EventArgs^ ea);
-	void onAddArgBtnClick(System::Object^ sender, System::EventArgs^ ea);
+	void onClearOutputBtnClick(System::Object^ sender, System::EventArgs^ ea);
 	void onArgsListControlAdded(System::Object^ sender, System::Windows::Forms::ControlEventArgs^ ea);
 	void onArgsListControlRemoved(System::Object^ sender, System::Windows::Forms::ControlEventArgs^ ea);
 	void onOpenFileDialogFileOk(System::Object^ sender, System::ComponentModel::CancelEventArgs^ ea);
 	void onSaveAsFileDialogFileOk(System::Object^ sender, System::ComponentModel::CancelEventArgs^ ea);
+	void onAddArgBtnClick(System::Object^ sender, System::EventArgs^ ea);
 };
