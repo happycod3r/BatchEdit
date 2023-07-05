@@ -40,5 +40,6 @@
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="LICENSE.md" />
+    <None Include="BatchEdit.exe" />
   </ItemGroup>
 </Project>

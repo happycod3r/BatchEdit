@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="BatchEdit.exe" />
     <None Include="LICENSE.md" />
     <None Include="README.md" />
   </ItemGroup>

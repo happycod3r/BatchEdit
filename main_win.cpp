@@ -13,6 +13,7 @@ using namespace System::Drawing;
 using namespace System::Diagnostics;
 
 #include "main_win.h"
+#include "process_win.h"
 
 MainWin::MainWin()
 {
@@ -83,6 +84,8 @@ void MainWin::runScript(System::String^ script_path, bool redirect) {
 			process->StartInfo->CreateNoWindow = false;
 			process->Start();
 		}
+		ProcessWin^ processForm = (gcnew ProcessWin(process, script_path));
+		processForm->Show();
 	}
 }
 
@@ -91,19 +94,24 @@ void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ scr
 	{
 		Process^ process = gcnew Process();
 		process->StartInfo = gcnew ProcessStartInfo(script_path);
-		process->StartInfo->UseShellExecute = false;
-		process->StartInfo->CreateNoWindow = true;
-		process->StartInfo->Arguments = script_args;
-		process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
 		if (redirect) {
+			process->StartInfo->Arguments = script_args;
+			process->StartInfo->UseShellExecute = false;
+			process->StartInfo->CreateNoWindow = true;
 			process->StartInfo->RedirectStandardOutput = true;
+			process->OutputDataReceived += gcnew DataReceivedEventHandler(this, &MainWin::outputDataReceived);
 			process->Start();
 			process->BeginOutputReadLine();
 		}
 		else {
+			process->StartInfo->Arguments = script_args;
+			process->StartInfo->UseShellExecute = true;
+			process->StartInfo->CreateNoWindow = false;
 			process->StartInfo->RedirectStandardOutput = false;
 			process->Start();
 		}
+		ProcessWin^ processForm = (gcnew ProcessWin(process, script_path));
+		processForm->Show();
 	}
 }
 
@@ -111,6 +119,7 @@ void MainWin::InitializeComponent()
 {
 	this->SuspendLayout();
 	Size = ::Size(600, 475);
+	Text = "BatchEdit v1.0.0";
 	MaximizeBox = false;
 	MinimizeBox = true;
 	ShowInTaskbar = true;
@@ -265,8 +274,8 @@ void MainWin::InitializeComponent()
 	add_arg_btn->Click += gcnew EventHandler(this, &MainWin::onAddArgBtnClick);
 
 	args_list_view = (gcnew ListView());
-	args_list_view->Location = Point(464, 350);
-	args_list_view->Size = ::Size(125, 87);
+	args_list_view->Location = Drawing::Point(464, 350);
+	args_list_view->Size = Drawing::Size(125, 87);
 	args_list_view->BackColor = SystemColors::ControlDark;
 	args_list_view->ForeColor = Color::Black;
 	args_list_view->Alignment = ListViewAlignment::Top;
@@ -607,6 +616,9 @@ void MainWin::onRunScriptBtnClick(Object^ sender, EventArgs^ ea)
 	for (int i = 0; i < this->args_list_view->Items->Count; i++) {
 		ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
 	}
+	// Save the file so that we run the current changes.
+	// In the future I suppose the user should be able to run
+	// the script without having to save, but I'll leave it for now.
 	saveFile();
 	// If there is no arguments...
 	if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
