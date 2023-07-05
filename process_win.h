@@ -11,6 +11,7 @@ private:
 public:
 	System::Windows::Forms::Label^ start_info;
 	System::Windows::Forms::Label^ start_time;
+	System::Windows::Forms::Button^ exit_process_btn;
 
 	System::Windows::Forms::ListView^ process_info_list;
 	System::Windows::Forms::ListViewItem^ item1;

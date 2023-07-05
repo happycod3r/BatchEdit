@@ -36,6 +36,15 @@ private:
 	System::Windows::Forms::Button^ run_script_btn;
 	System::Windows::Forms::Button^ add_arg_btn;
 
+	static System::String^ ALT_PROCESS_NAME = "";
+	static bool RUN_ALT_PROCESS = false;
+
+	System::Windows::Forms::RichTextBox^ alt_process_input;
+	System::Windows::Forms::CheckBox^ alt_process_checkbox;
+
+	void runProcess(System::String^ process_name);
+	void runProcessWithArgs(System::String^ process_name, System::String^ process_args);
+
 	static bool REDIRECT_PROC_OUTPUT = true; // By default display script output within BatchEdit
 	System::Windows::Forms::CheckBox^ redirect_proc_output_checkbox;
 
@@ -109,4 +118,6 @@ private:
 	void onSaveAsFileDialogFileOk(System::Object^ sender, System::ComponentModel::CancelEventArgs^ ea);
 	void onAddArgBtnClick(System::Object^ sender, System::EventArgs^ ea);
 	void onRedirectProcCheckedChanged(System::Object^ sender, System::EventArgs^ ea);
+	void onRunAltProcessTextBoxTextChanged(System::Object^ sender, System::EventArgs^ e);
+	void onRunAltProcessCheckBoxCheckedChanged(System::Object^ sender, System::EventArgs^ e);
 };

@@ -14,6 +14,7 @@ using namespace System::Diagnostics;
 
 #include "main_win.h"
 #include "process_win.h"
+#include "process.h"
 
 MainWin::MainWin()
 {
@@ -65,10 +66,32 @@ void MainWin::outputDataReceived(Object^ sender, DataReceivedEventArgs^ e)
 	}
 }
 
+void  MainWin::runProcess(System::String^ process_name) {
+	if (!System::String::IsNullOrEmpty(process_name)) {
+		MessageBox::Show(process_name);
+		Process^ process = gcnew Process();
+		process->StartInfo = gcnew ProcessStartInfo(process_name);
+		process->Start();
+		ProcessWin^ processForm = (gcnew ProcessWin(process, process_name));
+		processForm->Show();
+	}
+}
+
+void  MainWin::runProcessWithArgs(System::String^ process_name, System::String^ process_args) {
+	if (!System::String::IsNullOrEmpty(process_name)) {
+		Process^ process = gcnew Process();
+		process->StartInfo = gcnew ProcessStartInfo(process_name);
+		process->StartInfo->Arguments = process_args;
+		process->Start();
+		ProcessWin^ processForm = (gcnew ProcessWin(process, process_name));
+		processForm->Show();
+	}
+}
+
 void MainWin::runScript(System::String^ script_path, bool redirect) {
 	if (!System::String::IsNullOrEmpty(script_path))
 	{
-		Process^ process = gcnew Process();
+		ScriptProcess^ process = gcnew ScriptProcess();
 		process->StartInfo = gcnew ProcessStartInfo(script_path);
 		if (redirect) {
 			process->StartInfo->RedirectStandardOutput = true;
@@ -92,7 +115,7 @@ void MainWin::runScript(System::String^ script_path, bool redirect) {
 void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ script_args, bool redirect) {
 	if (!System::String::IsNullOrEmpty(script_path))
 	{
-		Process^ process = gcnew Process();
+		ScriptProcess^ process = gcnew ScriptProcess();
 		process->StartInfo = gcnew ProcessStartInfo(script_path);
 		if (redirect) {
 			process->StartInfo->Arguments = script_args;
@@ -169,7 +192,7 @@ void MainWin::InitializeComponent()
 
 	array<ToolStripMenuItem^>^ main_menu_items = (gcnew array<ToolStripMenuItem^>(1)
 	{
-		file_menu
+		file_menu,
 	});
 
 	main_menu->Items->AddRange(main_menu_items);
@@ -185,7 +208,7 @@ void MainWin::InitializeComponent()
 	file_name_output->Multiline = true;
 	file_name_output->ReadOnly = true;
 	file_name_output->BorderStyle = ::BorderStyle::None;
-	file_name_output->BackColor = SystemColors::ControlLight;
+	file_name_output->BackColor = Color::Blue;
 	file_name_output->ForeColor = Color::Black;
 	file_name_output->ShortcutsEnabled = true;
 	file_name_output->Text = getFullyQualifiedDefaultFileName();
@@ -193,7 +216,7 @@ void MainWin::InitializeComponent()
 
 	txt_input = (gcnew RichTextBox());
 	txt_input->Location = Point(2, 48);
-	txt_input->Size = ::Size(580, 300);//583, 300
+	txt_input->Size = ::Size(464, 300);//583, 300
 	txt_input->BorderStyle = ::BorderStyle::None;
 	txt_input->AcceptsTab = true;
 	txt_input->DetectUrls = false;
@@ -201,7 +224,7 @@ void MainWin::InitializeComponent()
 	txt_input->Font = (gcnew ::Font("Segoi UI", 10.0, FontStyle::Regular));
 	txt_input->MaxLength = INT_MAX;
 	txt_input->Multiline = true;
-	txt_input->BackColor = SystemColors::ControlLight;
+	txt_input->BackColor = Color::Yellow; //SystemColors::ControlLight;
 	txt_input->ForeColor = Color::Black;
 	txt_input->TextChanged += gcnew EventHandler(this, &MainWin::onTxtInputTextChanged);
 
@@ -245,7 +268,7 @@ void MainWin::InitializeComponent()
 	args_input->AcceptsTab = false;
 	args_input->DetectUrls = true;
 	args_input->Enabled = true;
-	args_input->Font = (gcnew ::Font("Trebuchet MS", 10.0, FontStyle::Regular));
+	args_input->Font = (gcnew ::Font("Segoi UI", 10.0, FontStyle::Regular));
 	args_input->MaxLength = 512;
 	args_input->Multiline = false;
 	args_input->Text = ARGS_INPUT_DEFAULT_TXT;
@@ -285,12 +308,28 @@ void MainWin::InitializeComponent()
 	args_list_view->ControlRemoved += gcnew ControlEventHandler(this, &MainWin::onArgsListControlRemoved);
 
 	redirect_proc_output_checkbox = (gcnew CheckBox());
-	redirect_proc_output_checkbox->Size = Drawing::Size(40, 40);
-	redirect_proc_output_checkbox->Location = Drawing::Point(420, 350);
+	redirect_proc_output_checkbox->Size = Drawing::Size(40, 20);
+	redirect_proc_output_checkbox->Location = Drawing::Point(410, 350);
 	redirect_proc_output_checkbox->CheckState = CheckState::Checked;
+	redirect_proc_output_checkbox->Text = "In";
 	redirect_proc_output_checkbox->CheckedChanged += gcnew System::EventHandler(this, &MainWin::onRedirectProcCheckedChanged);
+	redirect_proc_output_checkbox->BackColor = ::Color::Red;
 
-	array<Control^>^ ctrls = (gcnew array<Control^>(11)
+	alt_process_input = (gcnew RichTextBox());
+	alt_process_input->Size = ::Size(115, 25);
+	alt_process_input->Location = ::Point(468, 310);
+	alt_process_input->Font = (gcnew ::Font("Segoi UI", 10.0, FontStyle::Regular));
+	alt_process_input->TextChanged += gcnew System::EventHandler(this, &MainWin::onRunAltProcessTextBoxTextChanged);
+
+	alt_process_checkbox = (gcnew CheckBox());
+	alt_process_checkbox->Size = Drawing::Size(40, 20);
+	alt_process_checkbox->Location = Drawing::Point(410, 380);
+	alt_process_checkbox->CheckState = CheckState::Unchecked;
+	alt_process_checkbox->Text = "Alt";
+	alt_process_checkbox->BackColor = ::Color::Red;
+	alt_process_checkbox->CheckedChanged += gcnew System::EventHandler(this, &MainWin::onRunAltProcessCheckBoxCheckedChanged);
+
+	array<Control^>^ ctrls = (gcnew array<Control^>(14)
 	{
 		main_menu,
 			file_name_output,
@@ -302,7 +341,9 @@ void MainWin::InitializeComponent()
 			clear_output_btn,
 			add_arg_btn,
 			args_list_view,
-			redirect_proc_output_checkbox
+			redirect_proc_output_checkbox,
+			alt_process_input,
+			alt_process_checkbox
 	});
 
 	Controls->AddRange(ctrls);
@@ -612,33 +653,43 @@ void MainWin::onSaveScriptBtnClick(Object^ sender, EventArgs^ ea)
 
 void MainWin::onRunScriptBtnClick(Object^ sender, EventArgs^ ea)
 {
-	String^ ALL_SCRIPT_ARGS = "";
-	for (int i = 0; i < this->args_list_view->Items->Count; i++) {
-		ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
-	}
-	// Save the file so that we run the current changes.
-	// In the future I suppose the user should be able to run
-	// the script without having to save, but I'll leave it for now.
-	saveFile();
-	// If there is no arguments...
-	if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
-		if (REDIRECT_PROC_OUTPUT == true) {
-			this->runScript(CURRENT_FILE_PATH, true);
+	if (!RUN_ALT_PROCESS) {
+		String^ ALL_SCRIPT_ARGS = "";
+		for (int i = 0; i < this->args_list_view->Items->Count; i++) {
+			ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
 		}
+		saveFile();
+		// If there is no arguments...
+		if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
+			if (REDIRECT_PROC_OUTPUT == true) {
+				this->runScript(CURRENT_FILE_PATH, true);
+			}
+			else {
+				this->runScript(CURRENT_FILE_PATH, false);
+			}
+		}
+		// If there are arguments...
 		else {
-			this->runScript(CURRENT_FILE_PATH, false);
+			if (REDIRECT_PROC_OUTPUT == true) {
+				this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, true);
+			}
+			else {
+				this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, false);
+			}
 		}
 	}
-	// If there are arguments...
 	else {
-		if (REDIRECT_PROC_OUTPUT == true) {
-			this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, true);
+		String^ ALL_SCRIPT_ARGS = "";
+		for (int i = 0; i < this->args_list_view->Items->Count; i++) {
+			ALL_SCRIPT_ARGS += this->args_list_view->Items[i]->Text;
+		}
+		if (ALL_SCRIPT_ARGS == "" || System::String::IsNullOrEmpty(ALL_SCRIPT_ARGS)) {
+			runProcess(ALT_PROCESS_NAME);
 		}
 		else {
-			this->runScriptWithArgs(CURRENT_FILE_PATH, ALL_SCRIPT_ARGS, false);
+			runProcessWithArgs(ALT_PROCESS_NAME, ALL_SCRIPT_ARGS);
 		}
 	}
-
 }
 
 void MainWin::onClearOutputBtnClick(Object^ sender, EventArgs^ ea)
@@ -672,8 +723,26 @@ void MainWin::onRedirectProcCheckedChanged(System::Object^ sender, System::Event
 	bool checked_state = this->redirect_proc_output_checkbox->Checked;
 	if (checked_state) {
 		REDIRECT_PROC_OUTPUT = true;
+		this->redirect_proc_output_checkbox->Text = "In";
 	}
 	else {
 		REDIRECT_PROC_OUTPUT = false;
+		this->redirect_proc_output_checkbox->Text = "Ex";
+	}
+}
+
+void MainWin::onRunAltProcessTextBoxTextChanged(System::Object^ sender, System::EventArgs^ e)
+{
+	ALT_PROCESS_NAME = this->alt_process_input->Text;
+}
+
+void MainWin::onRunAltProcessCheckBoxCheckedChanged(System::Object^ sender, System::EventArgs^ e)
+{
+	bool checked_state = this->alt_process_checkbox->Checked;
+	if (checked_state) {
+		this->RUN_ALT_PROCESS = true;
+	}
+	else {
+		this->RUN_ALT_PROCESS = false;
 	}
 }

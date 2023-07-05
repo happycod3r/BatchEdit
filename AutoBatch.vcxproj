@@ -129,11 +129,13 @@
   <ItemGroup>
     <ClCompile Include="main_win.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="process.cpp" />
     <ClCompile Include="process_win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
     <ClInclude Include="main_win.h" />
+    <ClInclude Include="process.h" />
     <ClInclude Include="process_win.h" />
   </ItemGroup>
   <ItemGroup>

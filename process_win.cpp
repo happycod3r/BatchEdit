@@ -26,7 +26,7 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 	this->SuspendLayout();
 
 	this->start_time = gcnew Label();
-	start_time->Size = Drawing::Size(500, 50);
+	start_time->Size = Drawing::Size(800, 50);
 	start_time->Location = Drawing::Point(0, 0);
 	start_time->Text = "Start Time: " + process->StartTime.ToString();
 	start_time->BackColor = SystemColors::ControlDark;
@@ -34,8 +34,8 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 	start_time->Font = (gcnew Drawing::Font("Segoi UI", 14.0, FontStyle::Bold));;
 
 	this->start_info = gcnew Label();
-	start_info->Size = Drawing::Size(400, 550);
-	start_info->Location = Drawing::Point(600, 0);
+	start_info->Size = Drawing::Size(400, 500);
+	start_info->Location = Drawing::Point(600, 50);
 	start_info->Padding = System::Windows::Forms::Padding(8, 8, 8, 8);
 	start_info->Text =
 		"Start Info: " + process->StartInfo + Environment::NewLine +
@@ -51,6 +51,11 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 		"Std Output Encoding: " + process->StartInfo->StandardOutputEncoding;
 	start_info->BackColor = SystemColors::ControlDark;
 	start_info->Font = (gcnew Drawing::Font("Segoi UI", 12.0, FontStyle::Regular));
+
+	this->exit_process_btn = (gcnew System::Windows::Forms::Button());
+	this->exit_process_btn->Size = ::Size(65, 50);
+	this->exit_process_btn->Location = ::Point(800, 0);
+	this->exit_process_btn->Text = "Exit [X]";
 
 	this->process_info_list = (gcnew ListView());
 	this->process_info_list->View = View::Details;
@@ -312,13 +317,14 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 			item2
 	});*/
 
-	this->Text = process->Id.ToString();
+	this->Text = "pid: " + process->Id.ToString();
 	this->Size = Drawing::Size(1000, 550);
-	this->Controls->AddRange(gcnew array<Control^>(3)
+	this->Controls->AddRange(gcnew array<Control^>(4)
 	{
 		this->start_info,
 			this->start_time,
-			this->process_info_list
+			this->process_info_list,
+			this->exit_process_btn
 	});
 	this->ResumeLayout(false);
 	this->PerformLayout();
