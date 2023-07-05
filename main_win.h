@@ -23,6 +23,10 @@ private:
 	System::Windows::Forms::ToolStripMenuItem^ file_menu_restart;
 	System::Windows::Forms::ToolStripMenuItem^ file_menu_exit;
 
+	System::Windows::Forms::ToolStripMenuItem^ reference_menu;
+	System::Windows::Forms::ToolStripMenuItem^ reference_menu_cmds;
+
+
 	System::Windows::Forms::OpenFileDialog^ open_file_dialog;
 	System::Windows::Forms::SaveFileDialog^ save_as_file_dialog;
 
@@ -120,4 +124,5 @@ private:
 	void onRedirectProcCheckedChanged(System::Object^ sender, System::EventArgs^ ea);
 	void onRunAltProcessTextBoxTextChanged(System::Object^ sender, System::EventArgs^ e);
 	void onRunAltProcessCheckBoxCheckedChanged(System::Object^ sender, System::EventArgs^ e);
+	void onReferenceMenuCmdsClick(System::Object^ sender, System::EventArgs^ e);
 };

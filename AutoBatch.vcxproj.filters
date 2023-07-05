@@ -24,7 +24,10 @@
     <ClCompile Include="process_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="process.cpp">
+    <ClCompile Include="script_process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="reference_win.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,7 +41,10 @@
     <ClInclude Include="process_win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="process.h">
+    <ClInclude Include="script_process.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="reference_win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,5 +53,6 @@
     <None Include="README.md" />
     <None Include="LICENSE.md" />
     <None Include="BatchEdit.exe" />
+    <None Include="docs\batch_cmd_ref.md" />
   </ItemGroup>
 </Project>

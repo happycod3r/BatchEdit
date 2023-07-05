@@ -129,18 +129,21 @@
   <ItemGroup>
     <ClCompile Include="main_win.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="process.cpp" />
+    <ClCompile Include="script_process.cpp" />
     <ClCompile Include="process_win.cpp" />
+    <ClCompile Include="reference_win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
     <ClInclude Include="main_win.h" />
-    <ClInclude Include="process.h" />
+    <ClInclude Include="script_process.h" />
     <ClInclude Include="process_win.h" />
+    <ClInclude Include="reference_win.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="BatchEdit.exe" />
+    <None Include="docs\batch_cmd_ref.md" />
     <None Include="LICENSE.md" />
     <None Include="README.md" />
   </ItemGroup>

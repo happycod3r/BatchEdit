@@ -14,7 +14,8 @@ using namespace System::Diagnostics;
 
 #include "main_win.h"
 #include "process_win.h"
-#include "process.h"
+#include "script_process.h"
+#include "reference_win.h"
 
 MainWin::MainWin()
 {
@@ -141,7 +142,7 @@ void MainWin::runScriptWithArgs(System::String^ script_path, System::String^ scr
 void MainWin::InitializeComponent()
 {
 	this->SuspendLayout();
-	Size = ::Size(600, 475);
+	Size = ::Size(600, 500);
 	Text = "BatchEdit v1.0.0";
 	MaximizeBox = false;
 	MinimizeBox = true;
@@ -190,9 +191,21 @@ void MainWin::InitializeComponent()
 
 	file_menu->DropDownItems->AddRange(file_menu_items);
 
-	array<ToolStripMenuItem^>^ main_menu_items = (gcnew array<ToolStripMenuItem^>(1)
+	reference_menu = (gcnew ToolStripMenuItem("Reference"));
+
+	reference_menu_cmds = (gcnew ToolStripMenuItem("Commands"));
+	reference_menu_cmds->Click += gcnew System::EventHandler(this, &MainWin::onReferenceMenuCmdsClick);
+
+	array<ToolStripMenuItem^>^ reference_menu_items = (gcnew array<ToolStripMenuItem^>(1) {
+		reference_menu_cmds
+	});
+
+	reference_menu->DropDownItems->AddRange(reference_menu_items);
+
+	array<ToolStripMenuItem^>^ main_menu_items = (gcnew array<ToolStripMenuItem^>(2)
 	{
 		file_menu,
+			reference_menu
 	});
 
 	main_menu->Items->AddRange(main_menu_items);
@@ -208,15 +221,15 @@ void MainWin::InitializeComponent()
 	file_name_output->Multiline = true;
 	file_name_output->ReadOnly = true;
 	file_name_output->BorderStyle = ::BorderStyle::None;
-	file_name_output->BackColor = Color::Blue;
-	file_name_output->ForeColor = Color::Black;
+	file_name_output->BackColor = SystemColors::ControlDarkDark;
+	file_name_output->ForeColor = Color::WhiteSmoke;
 	file_name_output->ShortcutsEnabled = true;
 	file_name_output->Text = getFullyQualifiedDefaultFileName();
 	file_name_output->TextChanged += gcnew System::EventHandler(this, &MainWin::onFileNameOutputTextChanged);
 
 	txt_input = (gcnew RichTextBox());
 	txt_input->Location = Point(2, 48);
-	txt_input->Size = ::Size(464, 300);//583, 300
+	txt_input->Size = ::Size(583, 300);//583, 300
 	txt_input->BorderStyle = ::BorderStyle::None;
 	txt_input->AcceptsTab = true;
 	txt_input->DetectUrls = false;
@@ -224,7 +237,7 @@ void MainWin::InitializeComponent()
 	txt_input->Font = (gcnew ::Font("Segoi UI", 10.0, FontStyle::Regular));
 	txt_input->MaxLength = INT_MAX;
 	txt_input->Multiline = true;
-	txt_input->BackColor = Color::Yellow; //SystemColors::ControlLight;
+	txt_input->BackColor = SystemColors::ControlDark; //SystemColors::ControlLight;
 	txt_input->ForeColor = Color::Black;
 	txt_input->TextChanged += gcnew EventHandler(this, &MainWin::onTxtInputTextChanged);
 
@@ -297,7 +310,7 @@ void MainWin::InitializeComponent()
 	add_arg_btn->Click += gcnew EventHandler(this, &MainWin::onAddArgBtnClick);
 
 	args_list_view = (gcnew ListView());
-	args_list_view->Location = Drawing::Point(464, 350);
+	args_list_view->Location = Drawing::Point(464, 375);
 	args_list_view->Size = Drawing::Size(125, 87);
 	args_list_view->BackColor = SystemColors::ControlDark;
 	args_list_view->ForeColor = Color::Black;
@@ -313,11 +326,11 @@ void MainWin::InitializeComponent()
 	redirect_proc_output_checkbox->CheckState = CheckState::Checked;
 	redirect_proc_output_checkbox->Text = "In";
 	redirect_proc_output_checkbox->CheckedChanged += gcnew System::EventHandler(this, &MainWin::onRedirectProcCheckedChanged);
-	redirect_proc_output_checkbox->BackColor = ::Color::Red;
+	redirect_proc_output_checkbox->BackColor = SystemColors::Control;
 
 	alt_process_input = (gcnew RichTextBox());
 	alt_process_input->Size = ::Size(115, 25);
-	alt_process_input->Location = ::Point(468, 310);
+	alt_process_input->Location = ::Point(468, 348);
 	alt_process_input->Font = (gcnew ::Font("Segoi UI", 10.0, FontStyle::Regular));
 	alt_process_input->TextChanged += gcnew System::EventHandler(this, &MainWin::onRunAltProcessTextBoxTextChanged);
 
@@ -326,7 +339,7 @@ void MainWin::InitializeComponent()
 	alt_process_checkbox->Location = Drawing::Point(410, 380);
 	alt_process_checkbox->CheckState = CheckState::Unchecked;
 	alt_process_checkbox->Text = "Alt";
-	alt_process_checkbox->BackColor = ::Color::Red;
+	alt_process_checkbox->BackColor = SystemColors::Control;
 	alt_process_checkbox->CheckedChanged += gcnew System::EventHandler(this, &MainWin::onRunAltProcessCheckBoxCheckedChanged);
 
 	array<Control^>^ ctrls = (gcnew array<Control^>(14)
@@ -745,4 +758,10 @@ void MainWin::onRunAltProcessCheckBoxCheckedChanged(System::Object^ sender, Syst
 	else {
 		this->RUN_ALT_PROCESS = false;
 	}
+}
+
+void MainWin::onReferenceMenuCmdsClick(System::Object^ sender, System::EventArgs^ e)
+{
+	ReferenceWin^ reference_win = (gcnew ReferenceWin());
+	reference_win->Show();
 }
