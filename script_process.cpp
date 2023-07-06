@@ -21,3 +21,7 @@ void ScriptProcess::OnExited(System::Object^ sender, System::EventArgs^ e)
 {
 	//TODO
 }
+
+void ScriptProcess::endProcess(void) {
+	this->Close();
+}

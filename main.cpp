@@ -6,10 +6,11 @@ using namespace System::Windows::Forms;
 
 [STAThreadAttribute]
 
-void main(array<String^>^ args) {
+int main(array<String^>^ args) {
 	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 	MainWin main_win;
 	Application::Run(% main_win);
+	return 0;
 }
 

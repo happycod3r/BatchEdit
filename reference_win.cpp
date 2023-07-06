@@ -1,18 +1,18 @@
-#include "reference_win.h"
-
-#include <fstream>
-#include <sstream>
 
 #using <System.dll>	 
 #using <System.Windows.Forms.dll>
 #using <System.Drawing.dll>
+
+#include "resource.h"
+#include "reference_win.h"
+
 
 using namespace System;
 using namespace System::ComponentModel;
 using namespace System::Windows::Forms;
 using namespace System::Drawing;
 
-ReferenceWin::ReferenceWin(void) {
+ReferenceWin::ReferenceWin() {
 	InitializeComponent();
 }
 
@@ -22,15 +22,36 @@ ReferenceWin::~ReferenceWin() {
 	}
 }
 
-void  ReferenceWin::InitializeComponent(void) {
+void ReferenceWin::InitializeComponent() {
 	this->SuspendLayout();
 
 	Size = ::Size(600, 700);
 	Text = "BatchEdit v1.0.0 Reference";
 	this->Load += gcnew System::EventHandler(this, &ReferenceWin::onReferenceWinLoad);
 
-	array<Control^>^ ctrls = (gcnew array<Control^>(1) {
+	reference_browser = gcnew WebBrowser();
+	reference_browser->Size = ::Size(600, 630);
+	reference_browser->Location = ::Point(0, 0);
+	reference_browser->BackColor = SystemColors::ControlDark;
 
+	forward = gcnew Button();
+	forward->Size = ::Size(60, 50);
+	forward->Location = ::Point(520, 620);
+	forward->BackColor = ::Color::Red;
+	forward->Text = "-->";
+	forward->Click += gcnew System::EventHandler(this, &ReferenceWin::onForwardBtnClick);
+
+	back = gcnew Button();
+	back->Size = ::Size(60, 50);
+	back->Location = ::Point(0, 620);
+	back->BackColor = ::Color::Red;
+	back->Text = "<--";
+	back->Click += gcnew System::EventHandler(this, &ReferenceWin::onBackBtnClick);
+
+	array<Control^>^ ctrls = (gcnew array<Control^>(3) {
+		reference_browser,
+			forward,
+			back
 	});
 
 	Controls->AddRange(ctrls);
@@ -41,21 +62,21 @@ void  ReferenceWin::InitializeComponent(void) {
 
 void ReferenceWin::onReferenceWinLoad(System::Object^ sender, System::EventArgs^ e)
 {
-	// Load the Markdown file
-	std::ifstream file("docs/batch_cmd_ref.md");
-	std::stringstream buffer;
-	buffer << file.rdbuf();
-	std::string markdownContent = buffer.str();
-
-	// Convert the Markdown to HTML
-	// You'll need a Markdown-to-HTML library for this step,
-	// such as markdown-it or marked. Make sure to include
-	// the necessary headers and link against the library.
-
-	// Assuming you have converted the Markdown to HTML
-	// and stored it in the 'htmlContent' variable.
-
-	reference_browser = gcnew System::Windows::Forms::WebBrowser();
-	// Display the HTML content in the WebBrowser control
-	//reference_browser->DocumentText = gcnew System::String(htmlContent.c_str());
+	reference_browser->Navigate("https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands");
+	reference_browser->Show();
 }
+
+void ReferenceWin::onForwardBtnClick(System::Object^ sender, System::EventArgs^ e)
+{
+	if (!reference_browser->GoForward()) {
+		// do something ...
+	}
+}
+
+void ReferenceWin::onBackBtnClick(System::Object^ sender, System::EventArgs^ e)
+{
+	if (!reference_browser->GoBack()) {
+		// do something ... 
+	}
+}
+

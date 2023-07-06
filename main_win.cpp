@@ -11,11 +11,13 @@ using namespace System::ComponentModel;
 using namespace System::Windows::Forms;
 using namespace System::Drawing;
 using namespace System::Diagnostics;
+using namespace System::Resources;
 
 #include "main_win.h"
 #include "process_win.h"
 #include "script_process.h"
 #include "reference_win.h"
+#include "resource.h"
 
 MainWin::MainWin()
 {
@@ -294,7 +296,7 @@ void MainWin::InitializeComponent()
 	clear_output_btn = (gcnew Button());
 	clear_output_btn->Location = Point(120, 409);
 	clear_output_btn->Size = ::Size(60, 26);
-	clear_output_btn->Text = "Clear";
+	clear_output_btn->Text = "";
 	clear_output_btn->FlatStyle = ::FlatStyle::Popup;
 	clear_output_btn->BackColor = SystemColors::Control;
 	clear_output_btn->ForeColor = Color::Black;

@@ -1,6 +1,5 @@
 #pragma once
 
-// The main window is Autobatch's GUI.
 public ref class ReferenceWin : System::Windows::Forms::Form
 {
 public:
@@ -14,6 +13,11 @@ protected:
 private:
 	System::ComponentModel::Component^ components;
 	System::Windows::Forms::WebBrowser^ reference_browser;
-	void InitializeComponent(void);
+	System::Windows::Forms::Button^ forward;
+	System::Windows::Forms::Button^ back;
+
+	void InitializeComponent();
 	void onReferenceWinLoad(System::Object^ sender, System::EventArgs^ e);
+	void onForwardBtnClick(System::Object^ sender, System::EventArgs^ e);
+	void onBackBtnClick(System::Object^ sender, System::EventArgs^ e);
 };

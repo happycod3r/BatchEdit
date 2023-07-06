@@ -9,6 +9,7 @@ private:
 	System::ComponentModel::Container^ components;
 	void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, System::String^ script_path);
 public:
+	System::Diagnostics::Process^ current_process;
 	System::Windows::Forms::Label^ start_info;
 	System::Windows::Forms::Label^ start_time;
 	System::Windows::Forms::Button^ exit_process_btn;
@@ -48,4 +49,5 @@ public:
 	System::Windows::Forms::ListViewItem^ item32;
 	System::Windows::Forms::ListViewItem^ item33;
 	System::Windows::Forms::ListViewItem^ item34;
+	void onExitProcessBtnClick(System::Object^ sender, System::EventArgs^ e);
 };

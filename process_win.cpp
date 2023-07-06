@@ -13,6 +13,7 @@ using namespace System::Diagnostics;
 #include "process_win.h"
 
 ProcessWin::ProcessWin(System::Diagnostics::Process^ process, System::String^ script_path) {
+	this->current_process = process;
 	InitializeComponent(process, script_path);
 }
 
@@ -23,6 +24,7 @@ ProcessWin::~ProcessWin() {
 }
 
 void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, System::String^ script_path) {
+
 	this->SuspendLayout();
 
 	this->start_time = gcnew Label();
@@ -56,6 +58,7 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 	this->exit_process_btn->Size = ::Size(65, 50);
 	this->exit_process_btn->Location = ::Point(800, 0);
 	this->exit_process_btn->Text = "Exit [X]";
+	this->exit_process_btn->Click += gcnew System::EventHandler(this, &ProcessWin::onExitProcessBtnClick);
 
 	this->process_info_list = (gcnew ListView());
 	this->process_info_list->View = View::Details;
@@ -328,4 +331,10 @@ void ProcessWin::InitializeComponent(System::Diagnostics::Process^ process, Syst
 	});
 	this->ResumeLayout(false);
 	this->PerformLayout();
+}
+
+void ProcessWin::onExitProcessBtnClick(System::Object^ sender, System::EventArgs^ e)
+{
+	this->current_process->CancelOutputRead();
+	this->current_process->Kill();
 }

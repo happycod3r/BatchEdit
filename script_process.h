@@ -11,4 +11,6 @@ private:
 	void InitializeComponent(void);
 
 	void OnExited(System::Object^ sender, System::EventArgs^ e);
+
+	void endProcess();
 };

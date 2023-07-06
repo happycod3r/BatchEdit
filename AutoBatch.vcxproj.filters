@@ -47,12 +47,20 @@
     <ClInclude Include="reference_win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="LICENSE.md" />
-    <None Include="BatchEdit.exe" />
-    <None Include="docs\batch_cmd_ref.md" />
+    <None Include="ClassDiagram.cd" />
+    <None Include="docs\batch_reference.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="BatchEdit.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
